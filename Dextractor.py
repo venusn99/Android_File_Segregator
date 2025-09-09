@@ -51,7 +51,7 @@ class ExtractFileInfo():
             raise ValueError ( f"{self.file} doesn't have YYYYMMDD format to extract:  Pattern not matching\n")
     def extract_date_parts(self):
         return self.year, self.month, self.day
-class FileAction():
+class FolderAction():
     def __init__(self,src_dir,dst_dir,action='copy', format=None ):
         self.src_path=src_dir
         self.dst_path=dst_dir
