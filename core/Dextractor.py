@@ -2,6 +2,7 @@ import os
 import re
 from pathlib import Path
 import shutil
+from .Transport import FileTransporter
 # class File_syntax_exampler():
 #     # def __init__():
 #     #     return os.path.dirname(os.path.realpath(__file__))
@@ -16,14 +17,11 @@ class FilePathCheck(): # Class to validate if file path is valid
     Return:
         'True' if both source and destinations args are valid else 'False'
     '''
-    def __init__(self, source_directory, destionation_directory):
-        self.src_dir=source_directory
-        self.dst_dir=destionation_directory
-        self.path_exists_check()
+    def __init__(self,directory):
+        self.file_path=directory
     def path_exists_check(self):
-        src_exists= os.path.exists(self.src_dir)
-        dst_exists = os.path.exists(self.dst_dir)
-        return src_exists and dst_exists
+        path_exists= os.path.exists(self.file_path)
+        return path_exists
 
 class ExtractFileInfo():
     '''
@@ -39,7 +37,7 @@ class ExtractFileInfo():
         self.year , self.month, self.day = self.split_filename()
     def extract_basename(self):
         # extracts the basename of the file ex: /home/user1/file1.jpg the functions extracts file1.jpg
-        print("extracting the filename from relative path\n")
+        # print("extracting the filename from relative path\n")
         return os.path.basename(self.file)
     def split_filename(self):
         basename=self.extract_basename()
@@ -52,17 +50,12 @@ class ExtractFileInfo():
     def extract_date_parts(self):
         return self.year, self.month, self.day
 class FolderAction():
-    def __init__(self,src_dir,dst_dir,action='copy', format=None ):
+    def __init__(self,src_dir,dst_dir,action=None,format=None ):
         self.src_path=src_dir
         self.dst_path=dst_dir
-        self.action=action
         self.format = format
-        if FilePathCheck(self.src_path,self.dst_path):
-            print(" Source and Destination directory is valid\n")
-            print("Creating nested dircetory")
-            self.create_nested_directory()
-        else:
-            print("Source or Destination Directory is invalid ")
+        self.action= action
+        
     def create_nested_directory(self):
         """
         Replicates the directory structure of the source inside the destination.
@@ -75,17 +68,16 @@ class FolderAction():
             None
         """
         try:
-            print("in the function")
             for root, dirs, files in os.walk(self.src_path):
-                print(root, files)
+                # print(root, files)
                 relative_path = os.path.relpath(root, self.src_path)
-                print(files)
+                print(relative_path)
                 if len(files) > 0:
                     for file in files:
                         file_path = os.path.join(root, file)
                         file_info = ExtractFileInfo(file_path)
                         self.year, self.month, self.day = file_info.extract_date_parts()
-                    #Create corresponding directory in destination
+                        #Create corresponding directory in destination
                         if self.format == 1:
                             destination_path = os.path.join(self.dst_path, relative_path, self.year)
                         elif self.format == 2:
@@ -95,6 +87,14 @@ class FolderAction():
                         else:
                             destination_path = os.path.join(self.dst_path, relative_path)
                         os.makedirs(destination_path,exist_ok=True)
-                        print(f"Created: {destination_path}")
+                        print("Destination path created")
+                        if self.action !=None:
+                            # print('source file=',file_path)
+                            # print('destination_file=',os.path.join(destination_path,file))
+                            # print('file_action=',self.action)
+                            FileTransporter(src_file =file_path, dst_file= os.path.join(destination_path,file),action = self.action)
+                        else:
+                            print("I am not valid")
         except Exception as e:
-            print(f"An error occured: {e}")
+            return (f"An exception occured: {e}")
+    

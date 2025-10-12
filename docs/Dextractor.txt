@@ -1,0 +1,28 @@
+Dextractor file has 3 classes
+1) FilePathCheck
+2) ExtractFileInfo
+3) FolderAction
+
+class FilePathCheck: 
+    ''' class validates where the folder(file_path) exists'''
+
+    call method 'path_exists_check' to validate if path exists.
+
+
+class ExtractFileInfo:
+
+' This classs intention is to extract the Date , Month and Year from file name'
+
+ initialization:  takes file with full path 
+ extract_basename : method =  Extracts the file name excluding the path
+ split_filename : method = takes input as filename and extracts the Date , Month and Year from the filename as argument
+ extract_date_parts: method: returns year, month and date in this sequence
+
+
+ class FolderAction:
+
+ 'This class will create nested directory as source directory structure'
+
+ initialization : src_dir, dst_dir and format
+ create nested directory: creates the nested directory
+ 
