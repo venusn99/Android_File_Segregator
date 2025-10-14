@@ -79,14 +79,13 @@ class FolderAction():
                         file_info = ExtractFileInfo(file_path)
                         self.year, self.month, self.day = file_info.extract_date_parts()
                         #Create corresponding directory in destination
-                        if self.format == 1:
-                            destination_path = os.path.join(self.dst_path, relative_path, self.year)
-                        elif self.format == 2:
-                            destination_path = os.path.join(self.dst_path, relative_path, self.year, self.month)
+                        destination_path = os.path.join(self.dst_path, relative_path)
+                        if self.format == 2:
+                            destination_path = os.path.join(destination_path, self.year, self.month)
                         elif self.format == 3:
-                            destination_path = os.path.join(self.dst_path, relative_path, self.year, self.month, self.day)
+                            destination_path = os.path.join(destination_path, self.year, self.month, self.day)
                         else:
-                            destination_path = os.path.join(self.dst_path, relative_path)
+                            destination_path = os.path.join(destination_path, self.year)
                         os.makedirs(destination_path,exist_ok=True)
                         print("Destination path created")
                         if self.action !=None:
@@ -98,4 +97,3 @@ class FolderAction():
                             print("No file action is provided")
         except Exception as e:
             return (f"An exception occured: {e}")
-    

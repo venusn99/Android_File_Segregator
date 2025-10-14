@@ -19,7 +19,11 @@ class segregate_android_files():
 
 
 if __name__ == "__main__":
-    config = {'src_dir': '/home/venu/python-sandbox/playground/folder1', 'dst_dir' : '/home/venu/python-sandbox/playground/dst_folder', 'action':'copy', 'subfolder_format_number': 2 }
+    src_dir = input("Enter the source directory: ")
+    dst_dir = input("Enter the destination directory: ")
+    action = input("Enter the action (copy/move): ")
+    subfolder_format_number = int(input("Enter the subfolder format number: \n\t1: YYYY \n\t2: YYYY/MM \n\t3: YYYY/MM/DD \n"))
+    config = {'src_dir': src_dir, 'dst_dir': dst_dir, 'action': action, 'subfolder_format_number': subfolder_format_number}
 
     workflow1 = segregate_android_files(**config)
     workflow1.workflow()
