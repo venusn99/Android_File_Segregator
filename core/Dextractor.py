@@ -77,9 +77,9 @@ class FolderAction():
                     for file in files:
                         file_path = os.path.join(root, file)
                         file_info = ExtractFileInfo(file_path)
+                        destination_path = os.path.join(self.dst_path, relative_path)
                         self.year, self.month, self.day = file_info.extract_date_parts()
                         #Create corresponding directory in destination
-                        destination_path = os.path.join(self.dst_path, relative_path)
                         if self.format == 2:
                             destination_path = os.path.join(destination_path, self.year, self.month)
                         elif self.format == 3:
@@ -95,5 +95,8 @@ class FolderAction():
                             FileTransporter(src_file =file_path, dst_file= os.path.join(destination_path,file),action = self.action) # calling a class from Transport.py
                         else:
                             print("No file action is provided")
+        except ValueError as ve:
+            FileTransporter(src_file=file_path, dst_file=os.path.join(destination_path,'unattended_files',file), action=self.action) # calling this when the file doesn't have the YYYYMMDD format
         except Exception as e:
+            print("Exception occured",e)
             return (f"An exception occured: {e}")
