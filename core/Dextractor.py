@@ -50,12 +50,12 @@ class ExtractFileInfo():
     def extract_date_parts(self):
         return self.year, self.month, self.day
 class FolderAction():
-    def __init__(self,src_dir,dst_dir,action=None,format=None ):
+    def __init__(self,src_dir,dst_dir,action=None,format=None,unattend_files=None):
         self.src_path=src_dir
         self.dst_path=dst_dir
         self.format = format
         self.action= action
-        
+        self.unattend_files = unattend_files
         
     def create_nested_directory(self):
         """
@@ -75,28 +75,31 @@ class FolderAction():
                 # print(relative_path)
                 if len(files) > 0:
                     for file in files:
-                        file_path = os.path.join(root, file)
-                        file_info = ExtractFileInfo(file_path)
                         destination_path = os.path.join(self.dst_path, relative_path)
-                        self.year, self.month, self.day = file_info.extract_date_parts()
-                        #Create corresponding directory in destination
-                        if self.format == 2:
-                            destination_path = os.path.join(destination_path, self.year, self.month)
-                        elif self.format == 3:
-                            destination_path = os.path.join(destination_path, self.year, self.month, self.day)
-                        else:
-                            destination_path = os.path.join(destination_path, self.year)
-                        os.makedirs(destination_path,exist_ok=True)
-                        print("Destination path created")
-                        if self.action !=None:
-                            # print('source file=',file_path)
-                            # print('destination_file=',os.path.join(destination_path,file))
-                            # print('file_action=',self.action)
-                            FileTransporter(src_file =file_path, dst_file= os.path.join(destination_path,file),action = self.action) # calling a class from Transport.py
-                        else:
-                            print("No file action is provided")
-        except ValueError as ve:
-            FileTransporter(src_file=file_path, dst_file=os.path.join(destination_path,'unattended_files',file), action=self.action) # calling this when the file doesn't have the YYYYMMDD format
+                        file_path = os.path.join(root, file)
+                        try:
+                            file_info = ExtractFileInfo(file_path)
+                            self.year, self.month, self.day = file_info.extract_date_parts()
+                            #Create corresponding directory in destination
+                            if self.format == 2:
+                                destination_path = os.path.join(destination_path, self.year, self.month)
+                            elif self.format == 3:
+                                destination_path = os.path.join(destination_path, self.year, self.month, self.day)
+                            else:
+                                destination_path = os.path.join(destination_path, self.year)
+                            os.makedirs(destination_path,exist_ok=True)
+                            print("Destination path created")
+                            if self.action !=None:
+                                # print('source file=',file_path)
+                                # print('destination_file=',os.path.join(destination_path,file))
+                                # print('file_action=',self.action)
+                                FileTransporter(src_file =file_path, dst_file= os.path.join(destination_path,file),action = self.action) # calling a class from Transport.py
+                            else:
+                                print("No file action is provided")
+                        except ValueError as ve:
+                            if self.unattend_files:
+                                unattended_dir = os.path.join(destination_path,'unattended_files')
+                                os.makedirs(unattended_dir, exist_ok=True) # create destination directory if not exists, Triggeres during exception cause for unattended_files
+                                FileTransporter(src_file=file_path, dst_file=os.path.join(unattended_dir,file), action=self.action) # calling this when the file doesn't have the YYYYMMDD format
         except Exception as e:
-            print("Exception occured",e)
             return (f"An exception occured: {e}")
