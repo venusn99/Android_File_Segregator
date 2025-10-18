@@ -36,5 +36,4 @@ if __name__ == "__main__":
     parser.add_argument("--subfolder_format_number", "-F", type=int, choices=[1, 2, 3], required=True, help="Subfolder format number")
     args = parser.parse_args()
     workflow1 = segregate_android_files(**vars(args))
-    print(vars(args))
-    # workflow1.workflow()
+    workflow1.workflow()
